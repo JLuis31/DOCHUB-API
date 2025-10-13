@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DOCHUB", "DOCHUB\DOCHUB.csproj", "{36BAB22F-26D8-C064-E650-C5F576DBF085}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36BAB22F-26D8-C064-E650-C5F576DBF085}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36BAB22F-26D8-C064-E650-C5F576DBF085}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36BAB22F-26D8-C064-E650-C5F576DBF085}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36BAB22F-26D8-C064-E650-C5F576DBF085}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A4961044-B2B4-4D41-A775-ECDA119736BC}
+	EndGlobalSection
+EndGlobal
