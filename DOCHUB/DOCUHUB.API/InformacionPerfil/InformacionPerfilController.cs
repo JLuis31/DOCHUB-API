@@ -19,6 +19,7 @@ namespace DOCHUB.APP.Controllers
         }
 
         [HttpGet]
+        [Route("informacionUsuario")]
         public async Task<ActionResult<InformacionPerfil>> GetInformacionPerfil()
         {
             var userId = User.FindFirst("UserId")?.Value;
