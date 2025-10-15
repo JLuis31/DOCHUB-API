@@ -18,7 +18,7 @@ namespace DOCHUB.APP.Repositories
         public async Task<InformacionPerfil> GetInformacionPerfil(string idUsuario)
         {
 
-            var informacionPerfil = await _context.usuarios.Where(u => u.id == int.Parse(idUsuario)).FirstOrDefaultAsync();
+            var informacionPerfil = await _context.usuarios.Where(u => u.id == long.Parse(idUsuario)).FirstOrDefaultAsync();
 
             return new InformacionPerfil
             {
