@@ -2,21 +2,25 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copiar todo el proyecto
+# Copiar todo el código fuente al contenedor
 COPY . .
+
+# Restaurar dependencias y publicar en modo Release
 RUN dotnet restore
 RUN dotnet publish -c Release -o /app/publish
 
 # Etapa 2: runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
+
+# Copiar la salida publicada desde la etapa anterior
 COPY --from=build /app/publish .
 
-# Puerto que usará el contenedor
+# Exponer el puerto
 EXPOSE 8080
 
-# Variable de entorno para producción
+# Configurar variable de entorno para ASP.NET
 ENV ASPNETCORE_URLS=http://+:8080
 
-# Inicia la API
-ENTRYPOINT ["dotnet", "DOCHUB.API.dll"]
+# Ejecutar el DLL correcto
+ENTRYPOINT ["dotnet", "DOCHUB.dll"]
