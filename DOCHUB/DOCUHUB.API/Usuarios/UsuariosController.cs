@@ -43,7 +43,7 @@ namespace DOCHUB.APP.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Expires = DateTimeOffset.UtcNow.AddDays(_configuration.GetValue<int>("JWT:RefreshTokenExpirationDays"))
             });
             return Ok(respuesta);

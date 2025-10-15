@@ -3,16 +3,16 @@ namespace DOCHUB.APP.DB
     public class DocumentosDB
     {
 
-        internal static string sp_EliminarDocumento = "sp_EliminarDocumento";
-        internal static string spRegistroUsuario = "sp_InsercionDocumentos";
+        internal static string sp_EliminarDocumento = "sp_eliminardocumento";
+        internal static string sp_SubirDocumento = "sp_inserciondocumentos";
 
         internal static object SubirDocumentosParams(string idUsuario, string titulo, string ruta)
         {
             var parametros = new
             {
-                idUsuario,
-                titulo,
-                ruta
+                @idUsuario,
+                @titulo,
+                @ruta
             };
 
             return parametros;
@@ -22,9 +22,9 @@ namespace DOCHUB.APP.DB
         {
             var parametros = new
             {
-                idUsuario,
-                titulo,
-                fechaCarga
+                @idUsuario,
+                @titulo,
+                @fechaCarga
             };
 
             return parametros;

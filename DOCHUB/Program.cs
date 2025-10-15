@@ -57,7 +57,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddDbContext<AppDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("postgresql")).EnableSensitiveDataLogging());
 builder.Services.AddControllers();
 
 // Registrar servicios JWT
@@ -68,8 +68,9 @@ builder.Services.AddScoped<RefreshToken>();
 builder.Services.AddScoped<UsuariosRepository>();
 builder.Services.AddScoped<JWTRepository>();
 builder.Services.AddScoped<DocumentosRepository>();
+builder.Services.AddScoped<InformacionPerfilRepository>();
 
-// ✅ CAMBIO: Agregar HttpClient y usar el servicio simple
+//  CAMBIO: Agregar HttpClient y usar el servicio simple
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<CloudflareR2MinioService>();
 
@@ -96,15 +97,28 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy(name: MyAllowSpecificOrigins, policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+        policy
+            .SetIsOriginAllowed(origin => true)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
+});
+
+
+
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
+    options.Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
 });
 
 var app = builder.Build();
@@ -115,11 +129,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseHttpsRedirection();       // 1️⃣ primero redirección segura
+app.UseCookiePolicy();           // 2️⃣ luego política de cookies
+app.UseCors(MyAllowSpecificOrigins);
+app.UseAuthentication();         // 4️⃣ JWT
+app.UseAuthorization();          // 5️⃣ autorización
 app.MapControllers();
 
 app.Run();
-

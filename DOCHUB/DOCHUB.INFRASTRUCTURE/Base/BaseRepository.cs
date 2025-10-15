@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using Npgsql;
 
 namespace DOCHUB.APP.Base
 {
@@ -10,12 +11,12 @@ namespace DOCHUB.APP.Base
 
         protected BaseRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection")!;
+            _connectionString = configuration.GetConnectionString("postgresql")!;
         }
 
         protected IDbConnection CrearConexion()
         {
-            return new SqlConnection(_connectionString);
+            return new NpgsqlConnection(_connectionString);
         }
     }
 }

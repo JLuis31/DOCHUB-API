@@ -10,7 +10,7 @@ namespace DOCHUB.APP.JWT
     public class AccessToken
     {
 
-        public async Task<string> AccesToken(int usuarioId, string secretKey, string issuer, string audience, int expirationMinutes)
+        public async Task<string> AccesToken(long usuarioId, string secretKey, string issuer, string audience, int expirationMinutes)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

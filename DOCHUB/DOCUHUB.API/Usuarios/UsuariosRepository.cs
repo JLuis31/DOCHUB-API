@@ -28,7 +28,7 @@ namespace DOCHUB.APP.Repositories
 
         public async Task<Respuesta> RegistroUsuario(UsuarioDTO usuarioDTO)
         {
-            var validacion = await _context.Usuarios.AnyAsync(u => u.Email == usuarioDTO.Email);
+            var validacion = await _context.usuarios.AnyAsync(u => u.email == usuarioDTO.email);
             if (validacion == true)
             {
                 return new Respuesta
@@ -44,7 +44,7 @@ namespace DOCHUB.APP.Repositories
             var usuarioConHashedPassword = new UsuarioDTO
             {
                 Nombre = usuarioDTO.Nombre,
-                Email = usuarioDTO.Email,
+                email = usuarioDTO.email,
                 Password = hashedPassword,
                 RefreshToken = usuarioDTO.RefreshToken,
                 RefreshTokenExpiryTime = usuarioDTO.RefreshTokenExpiryTime
@@ -54,7 +54,9 @@ namespace DOCHUB.APP.Repositories
             var parametros = UsuariosDB.RegistroUsuarioParams(usuarioConHashedPassword);
             using (var conexion = CrearConexion())
             {
-                var resultado = await conexion.ExecuteAsync(UsuariosDB.spRegistroUsuario, parametros, commandType: CommandType.StoredProcedure);
+                var resultado = await conexion.ExecuteScalarAsync<int>(
+                    $"Select {UsuariosDB.spRegistroUsuario}(@Nombre, @Email, @Password, @RefreshToken, @RefreshTokenExpiryTime);", parametros, commandType: CommandType.Text
+                );
                 if (resultado > 0)
                 {
                     return new Respuesta
@@ -76,24 +78,24 @@ namespace DOCHUB.APP.Repositories
 
         public async Task<Respuesta> Login(string email, string password)
         {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+            var usuario = await _context.usuarios.FirstOrDefaultAsync(u => u.email == email);
             ;
 
             if (usuario != null)
             {
 
 
-                bool passwordValida = BCrypt.Net.BCrypt.Verify(password, usuario.Password);
+                bool passwordValida = BCrypt.Net.BCrypt.Verify(password, usuario.password);
 
                 if (passwordValida)
                 {
-                    var accessToken = await _accessToken.AccesToken(usuario.Id, _configuration["JWT:SecretKey"], _configuration["JWT:Issuer"], _configuration["JWT:Audience"], _configuration.GetValue<int>("JWT:AccessTokenExpirationMinutes"));
+                    var accessToken = await _accessToken.AccesToken(usuario.id, _configuration["JWT:SecretKey"], _configuration["JWT:Issuer"], _configuration["JWT:Audience"], _configuration.GetValue<int>("JWT:AccessTokenExpirationMinutes"));
 
                     return new Respuesta
                     {
                         Exito = true,
                         Mensaje = "Inicio de sesión exitoso.",
-                        Id = usuario.Id,
+                        Id = usuario.id,
                         Token = accessToken
                     };
                 }

@@ -10,11 +10,11 @@ namespace DOCHUB.APP.DB
         {
             var parametros = new
             {
-                usuario.Nombre,
-                usuario.Email,
-                usuario.Password,
-                usuario.RefreshToken,
-                usuario.RefreshTokenExpiryTime
+                @Nombre = usuario.Nombre,
+                @Email = usuario.email,
+                @Password = usuario.Password,
+                @RefreshToken = usuario.RefreshToken,
+                @RefreshTokenExpiryTime = usuario.RefreshTokenExpiryTime
             };
 
             return parametros;

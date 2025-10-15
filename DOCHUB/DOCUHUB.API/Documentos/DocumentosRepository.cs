@@ -23,13 +23,13 @@ namespace DOCHUB.APP.Repositories
 
         public async Task<Respuesta> SubirDocumentos(string idUsuario, string nombreArchivo, string rutaArchivo)
         {
-            Console.WriteLine($"Subiendo documento para Usuario: {idUsuario}, Nombre Archivo: {nombreArchivo}, Ruta Archivo: {rutaArchivo}");
             var parametros = DocumentosDB.SubirDocumentosParams(idUsuario, nombreArchivo, rutaArchivo);
 
             using (var conexion = CrearConexion())
             {
-                var resultado = await conexion.ExecuteAsync(DocumentosDB.spRegistroUsuario, parametros, commandType: CommandType.StoredProcedure);
-                if (resultado > 0)
+                var resultado = await conexion.ExecuteScalarAsync<int>(
+                    $"Select {DocumentosDB.sp_SubirDocumento}(@idUsuario, @titulo, @ruta);", parametros, commandType: CommandType.Text
+                ); if (resultado > 0)
                 {
                     return new Respuesta
                     {
@@ -46,13 +46,50 @@ namespace DOCHUB.APP.Repositories
         }
 
 
-        public async Task<RespuestaDocumentos> ObtenerDocumentos(string idUsuario)
+        public async Task<RespuestaDocumentosDto> ObtenerDocumentos(string idUsuario)
         {
             try
             {
-                var documentos = await _context.DocumentoHistorial
-                    .Where(d => d.idUsuario == int.Parse(idUsuario))
+                var documentos = await _context.documentohistorial
+                    .Where(d => d.idusuario == long.Parse(idUsuario))
+                    .Select(d => new DocumentoHistorialDto
+                    {
+                        iddocumento = d.iddocumento,
+                        idusuario = d.idusuario,
+                        idestado = d.idestado.ToString(),
+                        titulo = d.titulo,
+                        ruta = d.ruta,
+                        fechacarga = d.fechacarga
+                    })
                     .ToListAsync();
+
+                return new RespuestaDocumentosDto
+                {
+                    Exito = true,
+                    Datos = documentos
+                };
+            }
+            catch (Exception ex)
+            {
+                return new RespuestaDocumentosDto
+                {
+                    Exito = false,
+                    Mensaje = $"Error al obtener los documentos: {ex.Message}"
+                };
+            }
+        }
+
+        public async Task<RespuestaDocumentos> ObtenerDocumentosActivos(string idUsuario)
+        {
+            try
+            {
+                long usuarioId = long.Parse(idUsuario);
+                Console.WriteLine("ID de usuario recibido: " + usuarioId);
+
+                var documentos = await _context.documentohistorial
+                    .Where(d => d.idusuario == usuarioId && d.idestado == 1114885399933747201)
+                    .ToListAsync();
+
 
                 return new RespuestaDocumentos
                 {
@@ -70,12 +107,15 @@ namespace DOCHUB.APP.Repositories
             }
         }
 
-        public async Task<RespuestaDocumentos> ObtenerDocumentosActivos(string idUsuario)
+        public async Task<RespuestaDocumentos> ObtenerDocumentosActivosUltimo4(string idUsuario)
         {
             try
             {
-                var documentos = await _context.DocumentoHistorial
-                    .Where(d => d.idUsuario == int.Parse(idUsuario) && d.idEstado == 1)
+                long usuarioId = long.Parse(idUsuario);
+                var documentos = await _context.documentohistorial
+                    .Where(d => d.idusuario == usuarioId)
+                    .OrderByDescending(d => d.fechacarga)
+                    .Take(4)
                     .ToListAsync();
 
                 return new RespuestaDocumentos
@@ -115,10 +155,8 @@ namespace DOCHUB.APP.Repositories
 
                 using (var conexion = CrearConexion())
                 {
-                    var resultado = await conexion.ExecuteAsync(
-                        DocumentosDB.sp_EliminarDocumento,
-                        parametros,
-                        commandType: CommandType.StoredProcedure
+                    var resultado = await conexion.ExecuteScalarAsync<int>(
+                        $"Select ${DocumentosDB.sp_EliminarDocumento}(@idUsuario, @titulo, @fechaCarga);", parametros, commandType: CommandType.Text
                     );
 
                     if (resultado == 0)

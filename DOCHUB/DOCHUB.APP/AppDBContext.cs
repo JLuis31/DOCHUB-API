@@ -10,10 +10,10 @@ namespace DOCHUB.APP.Data
         {
         }
 
-        public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Documento> Documentos { get; set; }
-        public DbSet<EstadoDocumento> EstadoDocumentos { get; set; }
-        public DbSet<DocumentoHistorial> DocumentoHistorial { get; set; }
+        public DbSet<Usuario> usuarios { get; set; }
+        public DbSet<Documento> documentos { get; set; }
+        public DbSet<EstadoDocumento> estadodocumentos { get; set; }
+        public DbSet<DocumentoHistorial> documentohistorial { get; set; }
 
 
 

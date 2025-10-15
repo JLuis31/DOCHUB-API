@@ -23,32 +23,32 @@ namespace DOCHUB.APP.Repositories
         public async Task<string> InsercionRefreshToken(string email)
         {
             var refreshToken = await _refreshToken.GenerateRefreshToken();
-            var insertarRefreshToken = await _context.Usuarios.Where(u => u.Email == email).FirstOrDefaultAsync();
-            insertarRefreshToken.RefreshToken = refreshToken;
-            insertarRefreshToken.RefreshTokenExpiryTime = DateTime.Now.AddDays(_configuration.GetValue<int>("JWT:RefreshTokenExpirationDays"));
+            var insertarRefreshToken = await _context.usuarios.Where(u => u.email == email).FirstOrDefaultAsync();
+            insertarRefreshToken.refreshtoken = refreshToken;
+            insertarRefreshToken.refreshtokenexpirytime = DateTime.UtcNow.AddDays(_configuration.GetValue<int>("JWT:RefreshTokenExpirationDays"));
             await _context.SaveChangesAsync();
             return refreshToken;
         }
 
         public async Task<string> ActualizacionAccesToken(string refreshToken)
         {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            var usuario = await _context.usuarios.FirstOrDefaultAsync(u => u.refreshtoken == refreshToken);
 
-            if (usuario == null || usuario.RefreshTokenExpiryTime <= DateTime.Now)
+            if (usuario == null || usuario.refreshtokenexpirytime <= DateTime.UtcNow)
             {
                 return null;
             }
 
-            var nuevoAccessToken = await _accessToken.AccesToken(usuario.Id, _configuration["JWT:SecretKey"], _configuration["JWT:Issuer"], _configuration["JWT:Audience"], _configuration.GetValue<int>("JWT:AccessTokenExpirationMinutes"));
+            var nuevoAccessToken = await _accessToken.AccesToken(usuario.id, _configuration["JWT:SecretKey"], _configuration["JWT:Issuer"], _configuration["JWT:Audience"], _configuration.GetValue<int>("JWT:AccessTokenExpirationMinutes"));
 
             return nuevoAccessToken;
         }
 
         public async Task<bool> ValidacionRefreshToken(string refreshToken)
         {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            var usuario = await _context.usuarios.FirstOrDefaultAsync(u => u.refreshtoken == refreshToken);
 
-            if (usuario == null || usuario.RefreshTokenExpiryTime <= DateTime.Now)
+            if (usuario == null || usuario.refreshtokenexpirytime <= DateTime.UtcNow)
             {
                 return false;
             }
