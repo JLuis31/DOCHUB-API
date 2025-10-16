@@ -107,7 +107,7 @@ namespace DOCHUB.APP.Controllers
 
         [HttpDelete]
         [Route("eliminarDocumento")]
-        public async Task<IActionResult> EliminarDocumento(string idUsuario, string titulo, string fechaCarga)
+        public async Task<IActionResult> EliminarDocumento(string idUsuario, string titulo)
         {
             var userId = User.FindFirst("UserId")?.Value;
 
@@ -116,7 +116,7 @@ namespace DOCHUB.APP.Controllers
                 return BadRequest(new Respuesta { Exito = false, Mensaje = "ID de usuario es requerido." });
             }
             await _r2Service.EliminarArchivoAsync(userId, titulo);
-            var respuesta = await _documentosRepository.EliminarDocumento(userId, titulo, fechaCarga);
+            var respuesta = await _documentosRepository.EliminarDocumento(userId, titulo);
             if (respuesta.Exito)
             {
                 return Ok(respuesta);

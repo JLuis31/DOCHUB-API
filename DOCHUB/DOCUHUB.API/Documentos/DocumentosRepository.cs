@@ -134,7 +134,7 @@ namespace DOCHUB.APP.Repositories
             }
         }
 
-        public async Task<Respuesta> EliminarDocumento(string idUsuario, string titulo, string fechaCarga)
+        public async Task<Respuesta> EliminarDocumento(string idUsuario, string titulo)
         {
             try
             {
@@ -142,15 +142,11 @@ namespace DOCHUB.APP.Repositories
                                          .Select(t => t.Trim())
                                          .ToList();
 
-                var listaFechaCarga = fechaCarga.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                                .Select(f => DateTime.Parse(f.Trim()))
-                                                .ToList();
 
-                var fechasFormateadas = string.Join(",", listaFechaCarga.Select(f => f.ToString("yyyy-MM-dd HH:mm:ss")));
 
                 var titulosSeparados = string.Join(",", listaTitulos);
 
-                var parametros = DocumentosDB.EliminarDocumentoParams(idUsuario, titulosSeparados, fechasFormateadas);
+                var parametros = DocumentosDB.EliminarDocumentoParams(idUsuario, titulosSeparados);
                 Console.WriteLine("Parámetros enviados: " + parametros);
 
                 using (var conexion = CrearConexion())

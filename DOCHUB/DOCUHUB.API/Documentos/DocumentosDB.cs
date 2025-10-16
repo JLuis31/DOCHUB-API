@@ -18,13 +18,12 @@ namespace DOCHUB.APP.DB
             return parametros;
         }
 
-        internal static object EliminarDocumentoParams(string idUsuario, string titulo, string fechaCarga)
+        internal static object EliminarDocumentoParams(string idUsuario, string titulo)
         {
             var parametros = new
             {
                 @idUsuario,
-                @titulo,
-                @fechaCarga
+                @titulo
             };
 
             return parametros;
