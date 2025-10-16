@@ -152,7 +152,7 @@ namespace DOCHUB.APP.Repositories
                 using (var conexion = CrearConexion())
                 {
                     var resultado = await conexion.ExecuteScalarAsync<int>(
-                        $"Select ${DocumentosDB.sp_EliminarDocumento}(@idUsuario, @titulo);", parametros, commandType: CommandType.Text
+                        $"Select {DocumentosDB.sp_EliminarDocumento}(@idUsuario, @titulo);", parametros, commandType: CommandType.Text
                     );
 
                     if (resultado == 0)
