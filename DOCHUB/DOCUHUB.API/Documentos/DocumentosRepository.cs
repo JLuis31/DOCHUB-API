@@ -180,5 +180,31 @@ namespace DOCHUB.APP.Repositories
                 };
             }
         }
+
+
+        public async Task<dynamic> ObtenerTiposDocumentos(string userId)
+        {
+            long usuarioId = long.Parse(userId);
+            var tipos = new List<string>();
+            var tipoDocumentos = await _context.documentohistorial.Where(d => d.idusuario == usuarioId && d.ruta != null && d.ruta != "").ToListAsync();
+
+            foreach (var doc in tipoDocumentos)
+            {
+                var extension = Path.GetExtension(doc.ruta);
+                if (!tipos.Contains(extension))
+                {
+                    tipos.Add(extension);
+                }
+            }
+
+            var tiposFormateados = string.Join(", ", tipos);
+            return new
+            {
+                Exito = true,
+                Datos = tiposFormateados
+            };
+
+
+        }
     }
 }

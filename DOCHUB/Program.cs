@@ -101,14 +101,13 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Services.AddCors(options =>
 {
+    var allowed = new[] { "https://app.dochub.stream", "https://api.dochub.stream" };
+
     options.AddPolicy(name: MyAllowSpecificOrigins, policy =>
-    {
-        policy
-            .SetIsOriginAllowed(origin => true)
+      policy.WithOrigins(allowed)
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials();
-    });
+            .AllowCredentials());
 });
 
 

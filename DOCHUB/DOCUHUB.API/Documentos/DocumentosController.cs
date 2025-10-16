@@ -8,20 +8,18 @@ namespace DOCHUB.APP.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    // [Authorize]
 
     public class DocumentosController : ControllerBase
     {
         private readonly DocumentosRepository _documentosRepository;
         private readonly CloudflareR2MinioService _r2Service;
-        private readonly IConfiguration Configuration;
 
 
-        public DocumentosController(DocumentosRepository documentosRepository, CloudflareR2MinioService r2Service, IConfiguration configuration2)
+        public DocumentosController(DocumentosRepository documentosRepository, CloudflareR2MinioService r2Service)
         {
             _documentosRepository = documentosRepository;
             _r2Service = r2Service;
-            Configuration = configuration2;
         }
         [HttpPost]
         [Consumes("multipart/form-data")]
@@ -178,6 +176,20 @@ namespace DOCHUB.APP.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("documentosTipos")]
+        public async Task<IActionResult> ObtenerTiposDocumentos()
+        {
+            var userId = User.FindFirst("UserId")?.Value;
+
+            var respuesta = await _documentosRepository.ObtenerTiposDocumentos(userId);
+
+            if (respuesta.Exito)
+            {
+                return Ok(respuesta);
+            }
+            return BadRequest(respuesta);
+        }
 
 
     }
