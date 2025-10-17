@@ -8,7 +8,7 @@ namespace DOCHUB.APP.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // [Authorize]
+    [Authorize]
 
     public class DocumentosController : ControllerBase
     {

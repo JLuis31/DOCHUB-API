@@ -185,16 +185,18 @@ namespace DOCHUB.APP.Repositories
         public async Task<dynamic> ObtenerTiposDocumentos(string userId)
         {
             long usuarioId = long.Parse(userId);
+
+            var tipoDocumentos = await _context.documentohistorial
+                .Where(d => d.idusuario == usuarioId && !string.IsNullOrEmpty(d.ruta))
+                .ToListAsync();
+
             var tipos = new List<string>();
-            var tipoDocumentos = await _context.documentohistorial.Where(d => d.idusuario == usuarioId && d.ruta != null && d.ruta != "").ToListAsync();
 
             foreach (var doc in tipoDocumentos)
             {
-                var extension = Path.GetExtension(doc.ruta);
-                if (!tipos.Contains(extension))
-                {
+                var extension = Path.GetExtension(doc.ruta)?.ToLowerInvariant();
+                if (!string.IsNullOrWhiteSpace(extension))
                     tipos.Add(extension);
-                }
             }
 
             var tiposFormateados = string.Join(", ", tipos);
@@ -203,8 +205,6 @@ namespace DOCHUB.APP.Repositories
                 Exito = true,
                 Datos = tiposFormateados
             };
-
-
         }
     }
 }
